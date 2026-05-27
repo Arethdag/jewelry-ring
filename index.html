@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ювелирный магазин - Кольцо</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div style="max-width: 1100px; margin: 0 auto 20px; text-align: right;">
+        <a href="cart.html" style="text-decoration: none; color: #b8860b; font-size: 18px;">
+            🛒 Корзина (<span id="cartCount">0</span>)
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="flex">
+            <!-- Галерея -->
+            <div class="gallery">
+                <img src="images/agat_top.jpg" alt="Кольцо" id="mainImg">
+                <div class="thumbs">
+                    <img src="images/agat_top.jpg" class="thumb active" data-img="images/agat_top.jpg">
+                    <img src="images/agat_side.jpg" class="thumb" data-img="images/agat_side.jpg">
+                    <img src="images/agat_example.jpg" class="thumb" data-img="images/agat_example.jpg">
+                </div>
+            </div>
+
+            <!-- Информация -->
+            <div class="info">
+                <h1>Кольцо "Свет Агата"</h1>
+                <p>Красное золото 585° | Агат 0.35 карат</p>
+                <div class="price">
+                    20 990 ₽
+                    <span class="old-price">30 900 ₽</span>
+                </div>
+
+                <p><strong>Размер:</strong></p>
+                <div class="size-buttons">
+                    <div class="size" data-size="16">16</div>
+                    <div class="size" data-size="16.5">16.5</div>
+                    <div class="size selected" data-size="17">17</div>
+                    <div class="size" data-size="17.5">17.5</div>
+                    <div class="size" data-size="18">18</div>
+                </div>
+
+                <div class="qty">
+                    <button id="minus">-</button>
+                    <input type="number" id="qty" value="1" min="1" max="9">
+                    <button id="plus">+</button>
+                </div>
+
+                <button class="buy" id="addToCart">🛒 Добавить в корзину</button>
+                <p class="delivery">✅ Бесплатная доставка • Гарантия 2 года</p>
+            </div>
+        </div>
+
+        <!-- Вкладки -->
+        <div class="tabs">
+            <div class="tab-header">
+                <button class="tab-btn active" data-tab="desc">Описание</button>
+                <button class="tab-btn" data-tab="specs">Характеристики</button>
+                <button class="tab-btn" data-tab="reviews">Отзывы</button>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane active" id="desc">
+                    <p>Элегантное кольцо из Красного золота 750 пробы с натуральным Агатом и Фианитами. Идеально для
+                        помолвки или подарка.</p>
+                    <p>Камень: Агат (0.85 ct). Вставки: 16 фианита. Вес: 1,6 г.</p>
+                </div>
+                <div class="tab-pane" id="specs">
+                    <ul>
+                        <li>Металл: Красное золото 585°</li>
+                        <li>Вставка: Агат (0.35 ct)</li>
+                        <li>Фианиты: 16 шт, 0.16 ct</li>
+                        <li>Артикул: 7174265</li>
+                    </ul>
+                </div>
+                <div class="tab-pane" id="reviews">
+                    <p>⭐ <strong>Анна:</strong> Очень красивое кольцо, спасибо!</p>
+                    <hr>
+                    <p>⭐ <strong>Михаил:</strong> Подарок понравился, доставка быстрая.</p>
+                    <hr>
+                    <p>⭐ <strong>Елена:</strong> Качество отличное, рекомендую.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2026 Ювелирный магазин LUMIÈRE | г. Новосибирск | 8-800-555-35-35</p>
+        </footer>
+    </div>
+
+    <div class="toast" id="toast">Товар добавлен в корзину!</div>
+
+    <script>
+        // Переключение фото
+        const thumbs = document.querySelectorAll('.thumb');
+        const mainImg = document.getElementById('mainImg');
+        thumbs.forEach(thumb => {
+            thumb.addEventListener('click', function () {
+                mainImg.src = this.getAttribute('data-img');
+                thumbs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Цены для разных размеров
+        const priceBySize = {
+            '16': 19990,
+            '16.5': 20490,
+            '17': 20990,
+            '17.5': 21490,
+            '18': 21990
+        };
+
+        const basePrice = 20990;
+        let currentPrice = basePrice;
+        let selectedSize = '17';
+
+        // Элементы
+        const priceElement = document.querySelector('.price');
+        const qtyInput = document.getElementById('qty');
+        const toast = document.getElementById('toast');
+
+        // Функция обновления цены
+        function updatePrice(size) {
+            const newPrice = priceBySize[size] || basePrice;
+            const oldPrice = Math.round(newPrice * 1.48);
+
+            priceElement.innerHTML = `${newPrice.toLocaleString()} ₽ <span class="old-price">${oldPrice.toLocaleString()} ₽</span>`;
+            currentPrice = newPrice;
+
+            // Анимация
+            priceElement.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                priceElement.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        // Выбор размера
+        const sizes = document.querySelectorAll('.size');
+        sizes.forEach(size => {
+            size.addEventListener('click', function () {
+                sizes.forEach(s => s.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedSize = this.getAttribute('data-size');
+                updatePrice(selectedSize);
+            });
+        });
+
+        // Количество
+        document.getElementById('minus').onclick = () => {
+            let val = parseInt(qtyInput.value);
+            if (val > 1) qtyInput.value = val - 1;
+        };
+        document.getElementById('plus').onclick = () => {
+            let val = parseInt(qtyInput.value);
+            if (val < 9) qtyInput.value = val + 1;
+        };
+
+        // Вкладки
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const panes = {
+            desc: document.getElementById('desc'),
+            specs: document.getElementById('specs'),
+            reviews: document.getElementById('reviews')
+        };
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.getAttribute('data-tab');
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                Object.values(panes).forEach(p => p.classList.remove('active'));
+                panes[tab].classList.add('active');
+            });
+        });
+
+        // Класс корзины
+        class Cart {
+            constructor() {
+                this.items = this.loadFromStorage();
+            }
+
+            loadFromStorage() {
+                const saved = localStorage.getItem('cart');
+                return saved ? JSON.parse(saved) : [];
+            }
+
+            saveToStorage() {
+                localStorage.setItem('cart', JSON.stringify(this.items));
+            }
+
+            addItem(item) {
+                const existingItem = this.items.find(i =>
+                    i.id === item.id && i.size === item.size
+                );
+
+                if (existingItem) {
+                    existingItem.quantity += item.quantity;
+                } else {
+                    this.items.push({ ...item });
+                }
+
+                this.saveToStorage();
+            }
+
+            getTotalItems() {
+                return this.items.reduce((total, item) => total + item.quantity, 0);
+            }
+        }
+
+        const cart = new Cart();
+
+        // Функция обновления счетчика корзины
+        function updateCartDisplay() {
+            const cartCount = document.getElementById('cartCount');
+            if (cartCount) {
+                cartCount.textContent = cart.getTotalItems();
+            }
+        }
+
+        // Добавление в корзину
+        document.getElementById('addToCart').onclick = () => {
+            const quantity = parseInt(qtyInput.value);
+            const size = selectedSize;
+
+            const product = {
+                id: 'ring_agat_001',
+                name: 'Кольцо "Свет Агата"',
+                price: currentPrice,
+                size: size,
+                quantity: quantity,
+                image: mainImg.src,
+                metal: 'Красное золото 585°',
+                stone: 'Агат 0.35 карат'
+            };
+
+            cart.addItem(product);
+            updateCartDisplay();
+
+            // Показываем уведомление
+            toast.textContent = `✓ Добавлено! Размер ${size}, ${quantity} шт, ${currentPrice.toLocaleString()} ₽`;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+                toast.textContent = 'Товар добавлен в корзину!';
+            }, 2500);
+
+            console.log(`Добавлено: размер ${size}, кол-во ${quantity}, цена ${currentPrice} ₽`);
+        };
+
+        // Инициализация
+        updateCartDisplay();
+
+    </script>
+
+</body>
+
+</html>
